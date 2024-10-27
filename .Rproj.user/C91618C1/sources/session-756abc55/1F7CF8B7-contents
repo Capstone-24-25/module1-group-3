@@ -95,6 +95,7 @@ z_score <- biomarker_clean %>%
   select(where(is.numeric)) %>%
   mutate(across(everything(), ~ scale(.)))
 
+###
 deviation <- biomarker_clean %>%
   mutate(total_deviation = rowSums(abs(z_score), na.rm = T))
 
