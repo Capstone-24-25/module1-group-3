@@ -74,18 +74,18 @@ biomarker_raw <- read_csv('../data/biomarker-raw.csv',
 
 par(mfrow = c(1, 2))
 
-qqnorm(biomarker_raw$`Mcl-1`)
+qqnorm(main = "Raw Data Q-Q plot for `Mcl-1`", biomarker_raw$`Mcl-1`)
 qqline(biomarker_raw$`Mcl-1`, col = "red")
-qqnorm(biomarker_clean$`Mcl-1`)
+qqnorm(main = "Clean Data Q-Q plot for `Mcl-1`",biomarker_clean$`Mcl-1`)
 qqline(biomarker_clean$`Mcl-1`, col = "red")
 
 ```
 
 ```{r}
 par(mfrow = c(1, 2))
-qqnorm(biomarker_raw$DERM)
+qqnorm(main = "Clean Data Q-Q plot for `DERM`",biomarker_raw$DERM)
 qqline(biomarker_raw$DERM, col = "red")
-qqnorm(biomarker_clean$DERM)
+qqnorm(main = "Clean Data Q-Q plot for `DERM`",biomarker_clean$DERM)
 qqline(biomarker_clean$DERM, col = "red")
 ```
 
