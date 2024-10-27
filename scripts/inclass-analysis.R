@@ -4,7 +4,7 @@ library(randomForest)
 library(tidymodels)
 library(modelr)
 library(yardstick)
-load('data/biomarker-clean.RData')
+load('../data/biomarker-clean.RData')
 
 ## MULTIPLE TESTING
 ####################
@@ -101,4 +101,12 @@ testing(biomarker_split) %>%
   mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
   class_metrics(estimate = est,
               truth = tr_c, pred,
-              event_level = 'second')
+              event_level = 'second') %>% 
+  write.csv("../results/figures/inclass_results.csv") 
+  # wrote to csv for easy access to results
+
+# storing protein selections
+proteins_s1 %>%  write.csv("../results/figures/inclass_proteins_s1.csv")
+proteins_s2 %>%  write.csv("../results/figures/inclass_proteins_s2.csv")
+proteins_sstar %>% write.csv("../results/figures/inclass_proteins_sstar.csv")
+
