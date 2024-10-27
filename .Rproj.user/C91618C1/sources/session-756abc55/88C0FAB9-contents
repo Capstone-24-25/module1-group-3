@@ -1,0 +1,50 @@
+---
+title: "Biomarkers of ASD"
+subtitle: "If you want a subtitle put it here"
+author: "List names here"
+date: last-modified
+published-title: "Updated"
+editor: visual
+format: html
+code-copy: true
+execute:
+  message: false
+  warning: false
+  echo: false
+  cache: true
+---
+
+Use this as a template. Keep the headers and remove all other text. In all, your report can be quite short. When it is complete, render and then push changes to your team repository.
+
+```{r}
+# load any other packages and read data here
+library(tidyverse)
+```
+
+## Abstract
+
+Write a brief one-paragraph abstract that describes the contents of your write-up.
+
+## Dataset
+
+Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.
+
+## Summary of published analysis
+
+Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for [GraphViz and Mermaid flowcharts](https://quarto.org/docs/authoring/diagrams.html).) Provide key results: the proteins selected for the classifier and the estimated accuracy.
+
+## Findings
+
+Summarize your findings here. I've included some subheaders in a way that seems natural to me; you can structure this section however you like.
+
+### Impact of preprocessing and outliers
+
+Tasks 1-2
+
+### Methodlogical variations
+
+Task 3
+
+### Improved classifier
+
+Task 4
