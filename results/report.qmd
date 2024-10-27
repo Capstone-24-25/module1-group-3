@@ -41,6 +41,8 @@ Summarize your findings here. I've included some subheaders in a way that seems 
 
 ### Impact of preprocessing and outliers
 
+#### Task 1
+
 ```{r}
 load("../data/biomarker-clean.RData")
 
@@ -90,20 +92,9 @@ qqline(biomarker_clean$DERM, col = "red")
 
 We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that `DERM` is normally distributed before pre-porcessing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.
 
+#### Task 2
+
 ```{r}
-z_score <- biomarker_clean %>%
-  select(where(is.numeric)) %>%
-  mutate(across(everything(), ~ scale(.)))
-
-deviation <- biomarker_clean %>%
-  mutate(total_deviation = rowSums(abs(z_score), na.rm = T))
-
-ggplot(deviation, aes(x = group, y = total_deviation)) +
-  geom_boxplot() +
-  labs(title = "Total Deviation Score by Group", 
-       x = "Group", y = "Total Deviation Score") + 
-  theme_minimal()
-
 z_score <- biomarker_clean %>%
   group_by(group) %>%
   mutate(across(where(is.numeric), ~ scale(.))) %>%
@@ -113,13 +104,27 @@ outlier_counts <- z_score %>%
   mutate(across(where(is.numeric), ~ abs(.) > 3)) %>%
   group_by(group) %>%
   summarise(across(where(is.logical), sum, na.rm = T))
+```
+Outliers greater than 4:
+```{r}
+outliers_ge_4 <- outlier_counts %>%
+  pivot_longer(cols = -group, names_to = "Column", values_to = "Outlier_Count") %>%
+  filter(Outlier_Count >= 4) %>%
+  arrange(group, desc(Outlier_Count))
+outliers_ge_4
+```
+The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.
 
+```{r}
 total_outliers_by_group <- outlier_counts %>%
   rowwise() %>%
   mutate(Total_Outliers = sum(c_across(where(is.numeric)), na.rm = T)) %>%
   select(group, Total_Outliers)
 
+total_outliers_by_group
 ```
+
+Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.
 
 ### Methodlogical variations
 
