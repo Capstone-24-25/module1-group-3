@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="List names here">
-<meta name="dcterms.date" content="2023-10-27">
+<meta name="dcterms.date" content="2024-10-27">
 
 <title>Biomarkers of ASD</title>
 <style>
@@ -65,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Updated</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 27, 2023</p>
+      <p class="date">October 27, 2024</p>
     </div>
   </div>
   
@@ -93,7 +93,17 @@ ul.task-list li input[type="checkbox"] {
 <p>Summarize your findings here. I’ve included some subheaders in a way that seems natural to me; you can structure this section however you like.</p>
 <section id="impact-of-preprocessing-and-outliers" class="level3">
 <h3 class="anchored" data-anchor-id="impact-of-preprocessing-and-outliers">Impact of preprocessing and outliers</h3>
-<p>Tasks 1-2</p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-3_39bb29d1d3e490de8c6ec20fe65fdee0">
+<div class="cell-output-display">
+<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e00a763be961ca4c260be235a5b28cb">
+<div class="cell-output-display">
+<p><img src="report_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that <code>DERM</code> is normally distributed before pre-porcessing but not centered at 0, while <code>Mcl-1</code> is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.</p>
 </section>
 <section id="methodlogical-variations" class="level3">
 <h3 class="anchored" data-anchor-id="methodlogical-variations">Methodlogical variations</h3>
