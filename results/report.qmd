@@ -1,7 +1,6 @@
 ---
 title: "Biomarkers of ASD"
-subtitle: "If you want a subtitle put it here"
-author: "List names here"
+author: "Daniel Yan, Ziqian Zhao, Nazhah Mir, Xiaofeng Cai"
 date: last-modified
 published-title: "Updated"
 editor: visual
@@ -13,8 +12,6 @@ execute:
   echo: false
   cache: true
 ---
-
-Use this as a template. Keep the headers and remove all other text. In all, your report can be quite short. When it is complete, render and then push changes to your team repository.
 
 ```{r results = FALSE}
 # load any other packages and read data here
@@ -119,7 +116,9 @@ We compare the data before processing and after processing. Specifically, we com
 
 #### Task 2
 
-```{r}
+First, we will counting the number of outliers (Z-scores > 3 standard deviation from the mean) per subject.
+
+```{r, message = F}
 z_score <- biomarker_clean %>%
   group_by(group) %>%
   mutate(across(where(is.numeric), ~ scale(.))) %>%
@@ -131,7 +130,7 @@ outlier_counts <- z_score %>%
   summarise(across(where(is.logical), sum, na.rm = T))
 ```
 
-Outliers greater than 4:
+Most subjects have 0 to 3 outliers, but we are more interested in subjects with more than 4 outliers.
 
 ```{r}
 outliers_ge_4 <- outlier_counts %>%
@@ -141,18 +140,23 @@ outliers_ge_4 <- outlier_counts %>%
 outliers_ge_4
 ```
 
-The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.
+```{r}
+group_counts <- outliers_ge_4 %>%
+  count(group)
+group_counts
+```
+
+We found that the ASD group has 16 subjects with outliers greater than 4, with a maximum of 5 outliers per subject. The TD group has 18 subjects with outliers greater than 4, with a maximum of 4 outliers per subject.
 
 ```{r}
 total_outliers_by_group <- outlier_counts %>%
   rowwise() %>%
   mutate(Total_Outliers = sum(c_across(where(is.numeric)), na.rm = T)) %>%
   select(group, Total_Outliers)
-
 total_outliers_by_group
 ```
 
-Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.
+We also calculated the total number of outliers within each group and found that there are more outliers in the TD group than in the ASD group.
 
 ### Methodological variations
 
