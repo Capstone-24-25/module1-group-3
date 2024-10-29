@@ -28,13 +28,13 @@ library(yardstick)
 
 ## Abstract
 
-Write a brief one-paragraph abstract that describes the contents of your write-up.
+This study uses data from Hewitson et al. (2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections #and find xxxx results#. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.
 
 ## Dataset
 
 Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.
 
-The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation. 
+The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.
 
 ## Summary of published analysis
 
@@ -116,7 +116,7 @@ We compare the data before processing and after processing. Specifically, we com
 
 #### Task 2
 
-First, we will counting the number of outliers (Z-scores > 3 standard deviation from the mean) per subject.
+To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores \> 3 standard deviation from the mean) per subject.
 
 ```{r, message = F}
 z_score <- biomarker_clean %>%
