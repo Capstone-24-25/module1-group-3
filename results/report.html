@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="List names here">
-<meta name="dcterms.date" content="2024-10-27">
+<meta name="dcterms.date" content="2024-10-28">
 
 <title>Biomarkers of ASD</title>
 <style>
@@ -35,6 +35,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="report_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="report_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="report_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="report_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -65,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Updated</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 27, 2024</p>
+      <p class="date">October 28, 2024</p>
     </div>
   </div>
   
@@ -83,35 +86,139 @@ ul.task-list li input[type="checkbox"] {
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
 <p>Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.</p>
+<p>The data provided in Hewitson et al.&nbsp;(2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.</p>
 </section>
 <section id="summary-of-published-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-published-analysis">Summary of published analysis</h2>
 <p>Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for <a href="https://quarto.org/docs/authoring/diagrams.html">GraphViz and Mermaid flowcharts</a>.) Provide key results: the proteins selected for the classifier and the estimated accuracy.</p>
+<p>To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.</p>
+<p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Data Collected] --&gt; B(Preprocessing)
+  B --&gt; C(Random Forest)
+  B --&gt; D(t-test)
+  B --&gt; E(correlation-based method)
+  C --&gt; F{5 core protein} 
+  D --&gt; F{5 core protein}
+  E --&gt; F{5 core protein}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Taking those as the core protein, a prediction model is trained with them. They further investigate the 13 left proteins in whether they provided additive predictive power. Along with these model, a logistic regression model is implemented to investigate the accuracy. Four additional proteins provided additive predicitve power, so 9 preoteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.</p>
 </section>
 <section id="findings" class="level2">
 <h2 class="anchored" data-anchor-id="findings">Findings</h2>
 <p>Summarize your findings here. I’ve included some subheaders in a way that seems natural to me; you can structure this section however you like.</p>
 <section id="impact-of-preprocessing-and-outliers" class="level3">
 <h3 class="anchored" data-anchor-id="impact-of-preprocessing-and-outliers">Impact of preprocessing and outliers</h3>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-3_39bb29d1d3e490de8c6ec20fe65fdee0">
-<div class="cell-output-display">
-<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e00a763be961ca4c260be235a5b28cb">
+<section id="task-1" class="level4">
+<h4 class="anchored" data-anchor-id="task-1">Task 1</h4>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e61cbba387a87938500396962ad4923">
 <div class="cell-output-display">
 <p><img src="report_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-5_51e49e9680fa90f31094b0f971fd8cba">
+<div class="cell-output-display">
+<p><img src="report_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 <p>We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that <code>DERM</code> is normally distributed before pre-porcessing but not centered at 0, while <code>Mcl-1</code> is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.</p>
 </section>
-<section id="methodlogical-variations" class="level3">
-<h3 class="anchored" data-anchor-id="methodlogical-variations">Methodlogical variations</h3>
-<p>Task 3</p>
+<section id="task-2" class="level4">
+<h4 class="anchored" data-anchor-id="task-2">Task 2</h4>
+<p>Outliers greater than 4:</p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-7_8492b8905c7bfc5d6378fa06f6c595f7">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 34 × 3
+   group Column                    Outlier_Count
+   &lt;chr&gt; &lt;chr&gt;                             &lt;int&gt;
+ 1 ASD   SIG14                                 5
+ 2 ASD   Ephrin-A3                             4
+ 3 ASD   Annexin V                             4
+ 4 ASD   C1q                                   4
+ 5 ASD   IL-17F                                4
+ 6 ASD   CDK5/p35                              4
+ 7 ASD   TLR2                                  4
+ 8 ASD   Phosphoglycerate mutase 1             4
+ 9 ASD   NUDC3                                 4
+10 ASD   TGM3                                  4
+# ℹ 24 more rows</code></pre>
+</div>
+</div>
+<p>The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.</p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-8_6944a0bce0c932127835a5c869def109">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+# Rowwise: 
+  group Total_Outliers
+  &lt;chr&gt;          &lt;int&gt;
+1 ASD             1016
+2 TD              1312</code></pre>
+</div>
+</div>
+<p>Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.</p>
+</section>
+</section>
+<section id="methodological-variations" class="level3">
+<h3 class="anchored" data-anchor-id="methodological-variations">Methodological variations</h3>
+<p><strong>Original Methodology (from <em>inclass-analysis.R</em>):</strong></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-9_fd4c5b7063ae608d86ab37f5b4d78096">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  .metric     .estimator .estimate
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+1 sensitivity binary         0.812
+2 specificity binary         0.733
+3 accuracy    binary         0.774
+4 roc_auc     binary         0.883</code></pre>
+</div>
+</div>
+<p><strong>Task 3</strong> <strong>(Data split before variable selection)</strong></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-10_861f74c65fceff4bd529f06011394f10">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  .metric     .estimator .estimate
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+1 sensitivity binary         0.875
+2 specificity binary         0.75 
+3 accuracy    binary         0.812
+4 roc_auc     binary         0.820</code></pre>
+</div>
+</div>
+<p><strong>Task 3 (larger panel of proteins)</strong></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-11_b24fb06731244bd1bfce8ae279257228">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  .metric     .estimator .estimate
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+1 sensitivity binary         0.75 
+2 specificity binary         0.867
+3 accuracy    binary         0.806
+4 roc_auc     binary         0.892</code></pre>
+</div>
+</div>
 </section>
 <section id="improved-classifier" class="level3">
 <h3 class="anchored" data-anchor-id="improved-classifier">Improved classifier</h3>
-<p>Task 4</p>
+<p><strong>Task 4 (Improved panel of proteins)</strong></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-12_0b3a320ed4a47a3e11cb8785d03966a4">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  .metric     .estimator .estimate
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+1 sensitivity binary         0.938
+2 specificity binary         0.8  
+3 accuracy    binary         0.871
+4 roc_auc     binary         0.896</code></pre>
+</div>
+</div>
 </section>
 </section>
 
