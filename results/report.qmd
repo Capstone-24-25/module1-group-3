@@ -114,7 +114,7 @@ qqline(biomarker_clean$DERM, col = "red")
 
 We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that `DERM` is normally distributed before pre-porcessing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.
 
-#### Task 2
+### Task 2
 
 To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores \> 3 standard deviation from the mean) per subject.
 
@@ -394,6 +394,61 @@ testing(biomarker_split_top20) %>%
   class_metrics(estimate = est,
                 truth = tr_c, pred,
                 event_level = 'second')
+```
+
+**Task 3 (Fuzzy Intersection)**
+
+```{r}
+# MULTIPLE TESTING SELECTION
+proteins_s1_fuzzy <- ttests_out %>%
+  slice_min(p.adj, n = 10) %>%
+  pull(protein)
+
+## RANDOM FOREST SELECTION
+proteins_s2_fuzzy <- rf_out$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+## FUZZY INTERSECTION
+#####################
+#Combine scores from both methods and assign fuzzy scores
+all_proteins_fuzzy <- unique(c(proteins_s1_fuzzy, proteins_s2_fuzzy))
+
+fuzzy_scores <- tibble(protein = all_proteins_fuzzy) %>%
+  mutate(score = (protein %in% proteins_s1_fuzzy) + (protein %in% proteins_s2_fuzzy))
+
+fuzzy_threshold <- 1.5
+
+## LOGISTIC REGRESSION
+
+# select subset of interest
+proteins_sstar_fuzzy <- fuzzy_scores %>%
+  filter(score >= fuzzy_threshold) %>%
+  pull(protein)
+
+biomarker_sstar_fuzzy <- biomarker_clean %>%
+  select(group, any_of(proteins_sstar_fuzzy)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# partition into training and test set
+set.seed(101422)
+biomarker_split_fuzzy <- biomarker_sstar_fuzzy %>%
+  initial_split(prop = 0.8)
+
+# fit logistic regression model to training set
+fit_fuzzy <- glm(class ~ ., 
+           data = training(biomarker_split_fuzzy), 
+           family = 'binomial')
+
+testing(biomarker_split_fuzzy) %>%
+  add_predictions(fit_fuzzy, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+              truth = tr_c, pred,
+              event_level = 'second')
 ```
 
 ### Improved classifier
