@@ -21,6 +21,7 @@ Use this as a template. Keep the headers and remove all other text. In all, your
 library(tidyverse)
 library(ggplot2)
 library(readr)
+library(dplyr)
 ```
 
 ## Abstract
@@ -105,7 +106,9 @@ outlier_counts <- z_score %>%
   group_by(group) %>%
   summarise(across(where(is.logical), sum, na.rm = T))
 ```
+
 Outliers greater than 4:
+
 ```{r}
 outliers_ge_4 <- outlier_counts %>%
   pivot_longer(cols = -group, names_to = "Column", values_to = "Outlier_Count") %>%
@@ -113,6 +116,7 @@ outliers_ge_4 <- outlier_counts %>%
   arrange(group, desc(Outlier_Count))
 outliers_ge_4
 ```
+
 The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.
 
 ```{r}
@@ -126,7 +130,7 @@ total_outliers_by_group
 
 Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.
 
-### Methodlogical variations
+### Methodological variations
 
 Task 3
 
