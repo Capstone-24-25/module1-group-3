@@ -19,6 +19,9 @@ Use this as a template. Keep the headers and remove all other text. In all, your
 ```{r}
 # load any other packages and read data here
 library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr)
 ```
 
 ## Abstract
@@ -39,9 +42,95 @@ Summarize your findings here. I've included some subheaders in a way that seems 
 
 ### Impact of preprocessing and outliers
 
-Tasks 1-2
+#### Task 1
 
-### Methodlogical variations
+```{r}
+load("../data/biomarker-clean.RData")
+
+# clean data without log-transformation
+var_names <- read_csv('../data/biomarker-raw.csv', 
+                      col_names = F, 
+                      n_max = 2, 
+                      col_select = -(1:2)) %>%
+  t() %>%
+  as_tibble() %>%
+  rename(name = V1, 
+         abbreviation = V2) %>%
+  na.omit()
+
+biomarker_raw <- read_csv('../data/biomarker-raw.csv', 
+                            skip = 2,
+                            col_select = -2L,
+                            col_names = c('group', 
+                                          'empty',
+                                          pull(var_names, abbreviation),
+                                          'ados'),
+                            na = c('-', '')) %>%
+  filter(!is.na(group))
+
+```
+
+```{r}
+#investigate the potential reason for log-transformation
+# check normality for some protein
+
+par(mfrow = c(1, 2))
+
+qqnorm(main = "Raw Data Q-Q plot for `Mcl-1`", biomarker_raw$`Mcl-1`)
+qqline(biomarker_raw$`Mcl-1`, col = "red")
+qqnorm(main = "Clean Data Q-Q plot for `Mcl-1`",biomarker_clean$`Mcl-1`)
+qqline(biomarker_clean$`Mcl-1`, col = "red")
+
+```
+
+```{r}
+par(mfrow = c(1, 2))
+qqnorm(main = "Clean Data Q-Q plot for `DERM`",biomarker_raw$DERM)
+qqline(biomarker_raw$DERM, col = "red")
+qqnorm(main = "Clean Data Q-Q plot for `DERM`",biomarker_clean$DERM)
+qqline(biomarker_clean$DERM, col = "red")
+```
+
+We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that `DERM` is normally distributed before pre-porcessing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.
+
+#### Task 2
+
+```{r}
+z_score <- biomarker_clean %>%
+  group_by(group) %>%
+  mutate(across(where(is.numeric), ~ scale(.))) %>%
+  ungroup()
+
+outlier_counts <- z_score %>%
+  mutate(across(where(is.numeric), ~ abs(.) > 3)) %>%
+  group_by(group) %>%
+  summarise(across(where(is.logical), sum, na.rm = T))
+```
+
+Outliers greater than 4:
+
+```{r}
+outliers_ge_4 <- outlier_counts %>%
+  pivot_longer(cols = -group, names_to = "Column", values_to = "Outlier_Count") %>%
+  filter(Outlier_Count >= 4) %>%
+  arrange(group, desc(Outlier_Count))
+outliers_ge_4
+```
+
+The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.
+
+```{r}
+total_outliers_by_group <- outlier_counts %>%
+  rowwise() %>%
+  mutate(Total_Outliers = sum(c_across(where(is.numeric)), na.rm = T)) %>%
+  select(group, Total_Outliers)
+
+total_outliers_by_group
+```
+
+Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.
+
+### Methodological variations
 
 Task 3
 
