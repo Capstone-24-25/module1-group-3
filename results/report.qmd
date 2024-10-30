@@ -261,8 +261,6 @@ testing(biomarker_split) %>%
 
 **Task 3** **(Data split before variable selection)**
 
-Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
-
 ```{r}
 ## training & testing partition ##
 ##################################
@@ -351,6 +349,8 @@ biomarker_sstar_test %>%
                 event_level = 'second')
 ```
 
+Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
+
 **Task 3 (larger panel of proteins)**
 
 ```{r}
@@ -393,6 +393,8 @@ testing(biomarker_split_top20) %>%
                 truth = tr_c, pred,
                 event_level = 'second')
 ```
+
+The model with 20 proteins performs a lot differently than the original model with 10 proteins from the in class analysis. First, the sensitivity decreased from 0.8125 to 0.75, which means the new model's ability to correctly identify cases of ASD has decreased. However, the specificity increased from 0.733 to 0.8667, which means that the model performs better in identifying non-ASD cases. The model's accuracy also improved from 0.7742 to 0.8065, which means that the new model correctly classifies more cases in total. Lastly, the ROC AUC score also improved slightly, from 0.8833 to 0.8917, which means that the model is able to separate positive and negative cases better. By adding 20 proteins instead of 10, the model can better identify negative cases and distinguish between negative and positive cases better. However, the addition of these new features diluted the predictors for positive ASD cases, decreasing the sensitivity.
 
 **Task 3 (Fuzzy Intersection)**
 
