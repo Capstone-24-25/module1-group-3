@@ -261,6 +261,8 @@ testing(biomarker_split) %>%
 
 **Task 3** **(Data split before variable selection)**
 
+Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
+
 ```{r}
 ## training & testing partition ##
 ##################################
