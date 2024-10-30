@@ -54,7 +54,7 @@ graph LR
   ")
 ```
 
-Taking those as the core protein, a prediction model is trained with them. They further investigate the 13 left proteins in whether they provided additive predictive power. Along with these model, a logistic regression model is implemented to investigate the accuracy. Four additional proteins provided additive predicitve power, so 9 preoteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.
+Taking those as the core proteins, a predictive model is trained with them. They further investigate the 13 proteins left in whether they provided additive predictive power. Along with these model,s a logistic regression model is implemented to investigate the accuracy. It was discovered that four additional proteins provided additive predictive power, so a total of 9 proteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.
 
 ## Findings
 
