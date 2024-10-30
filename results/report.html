@@ -35,9 +35,15 @@ ul.task-list li input[type="checkbox"] {
 <script src="report_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-<script src="report_files/libs/quarto-diagram/mermaid.min.js"></script>
-<script src="report_files/libs/quarto-diagram/mermaid-init.js"></script>
-<link href="report_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<link href="report_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="report_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="report_files/libs/d3-3.3.8/d3.min.js"></script>
+<script src="report_files/libs/dagre-0.4.0/dagre-d3.min.js"></script>
+<link href="report_files/libs/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="report_files/libs/mermaid-0.3.0/dist/mermaid.slim.min.js"></script>
+<link href="report_files/libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="report_files/libs/chromatography-0.1/chromatography.js"></script>
+<script src="report_files/libs/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script>
 
 
 </head>
@@ -88,22 +94,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="summary-of-published-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-published-analysis">Summary of published analysis</h2>
 <p>To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.</p>
-<p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code>.</p>
-<div class="cell">
+<p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-2_4b53ab915b5c7b81993d936a2a377992">
 <div class="cell-output-display">
-<div>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-  A[Data Collected] --&gt; B(Preprocessing)
-  B --&gt; C(Random Forest)
-  B --&gt; D(t-test)
-  B --&gt; E(correlation-based method)
-  C --&gt; F{5 core protein} 
-  D --&gt; F{5 core protein}
-  E --&gt; F{5 core protein}
-</pre>
-</div>
-</div>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-270b457cb0842d113825" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-270b457cb0842d113825">{"x":{"diagram":"\ngraph LR\n  A[Data Collected] --> B(Preprocessing)\n  B --> C(Random Forest)\n  B --> D(t-test)\n  B --> E(correlation-based method)\n  C --> F{5 core protein} \n  D --> F{5 core protein}\n  E --> F{5 core protein}        \n  "},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Taking those as the core protein, a prediction model is trained with them. They further investigate the 13 left proteins in whether they provided additive predictive power. Along with these model, a logistic regression model is implemented to investigate the accuracy. Four additional proteins provided additive predicitve power, so 9 preoteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.</p>
@@ -213,22 +208,43 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>The model with 20 proteins performs a lot differently than the original model with 10 proteins from the in class analysis. First, the sensitivity decreased from 0.8125 to 0.75, which means the new model’s ability to correctly identify cases of ASD has decreased. However, the specificity increased from 0.733 to 0.8667, which means that the model performs better in identifying non-ASD cases. The model’s accuracy also improved from 0.7742 to 0.8065, which means that the new model correctly classifies more cases in total. Lastly, the ROC AUC score also improved slightly, from 0.8833 to 0.8917, which means that the model is able to separate positive and negative cases better. By adding 20 proteins instead of 10, the model can better identify negative cases and distinguish between negative and positive cases better. However, the addition of these new features diluted the predictors for positive ASD cases, decreasing the sensitivity.</p>
 <p><strong>Task 3 (Fuzzy Intersection)</strong></p>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-13_a3367102ddac78b11cb10b933b824289">
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-13_5119f79ad7709119c29077cb865446b2">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
-1 sensitivity binary         0.812
-2 specificity binary         0.733
-3 accuracy    binary         0.774
-4 roc_auc     binary         0.883</code></pre>
+1 sensitivity binary         0.562
+2 specificity binary         0.8  
+3 accuracy    binary         0.677
+4 roc_auc     binary         0.783</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-14_37b47e7d47e2251edf15283df2ac537a">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "DERM"            "RELT"            "Calcineurin"     "C1QR1"          
+ [5] "MRC2"            "IgD"             "CXCL16, soluble" "PTN"            
+ [9] "FSTL1"           "Cadherin-5"      "MAPK14"          "eIF-4H"         
+[13] "TSP4"            "ALCAM"           "FSTL3"          </code></pre>
+</div>
+</div>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-15_2563990534c664259f75e2ec2751ea58">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "DERM"            "RELT"            "Calcineurin"     "C1QR1"          
+ [5] "MRC2"            "IgD"             "CXCL16, soluble" "PTN"            
+ [9] "FSTL1"           "Cadherin-5"     </code></pre>
+</div>
+</div>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-16_2264fc6d704ef753d837ea887bd3a44d">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "DERM"       "IgD"        "MAPK14"     "RELT"       "eIF-4H"    
+ [6] "TSP4"       "MRC2"       "ALCAM"      "FSTL3"      "Cadherin-5"</code></pre>
 </div>
 </div>
 </section>
 <section id="improved-classifier" class="level3">
 <h3 class="anchored" data-anchor-id="improved-classifier">Improved classifier</h3>
 <p><strong>Task 4 (Improved panel of proteins)</strong></p>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-14_d1caa3ca1f2ca5961997473ae3722edb">
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-17_763364a5db6224dc31fb8139a75dcd26">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
