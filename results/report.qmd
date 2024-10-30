@@ -32,13 +32,9 @@ This study uses data from Hewitson et al. (2021), which includes 154 male pediat
 
 ## Dataset
 
-Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.
-
 The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.
 
 ## Summary of published analysis
-
-Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for [GraphViz and Mermaid flowcharts](https://quarto.org/docs/authoring/diagrams.html).) Provide key results: the proteins selected for the classifier and the estimated accuracy.
 
 To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.
 
@@ -114,7 +110,7 @@ qqline(biomarker_clean$DERM, col = "red")
 
 We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that `DERM` is normally distributed before pre-porcessing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.
 
-#### Task 2
+### Task 2
 
 To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores \> 3 standard deviation from the mean) per subject.
 
@@ -353,6 +349,8 @@ biomarker_sstar_test %>%
                 event_level = 'second')
 ```
 
+Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
+
 **Task 3 (larger panel of proteins)**
 
 ```{r}
@@ -394,6 +392,63 @@ testing(biomarker_split_top20) %>%
   class_metrics(estimate = est,
                 truth = tr_c, pred,
                 event_level = 'second')
+```
+
+The model with 20 proteins performs a lot differently than the original model with 10 proteins from the in class analysis. First, the sensitivity decreased from 0.8125 to 0.75, which means the new model's ability to correctly identify cases of ASD has decreased. However, the specificity increased from 0.733 to 0.8667, which means that the model performs better in identifying non-ASD cases. The model's accuracy also improved from 0.7742 to 0.8065, which means that the new model correctly classifies more cases in total. Lastly, the ROC AUC score also improved slightly, from 0.8833 to 0.8917, which means that the model is able to separate positive and negative cases better. By adding 20 proteins instead of 10, the model can better identify negative cases and distinguish between negative and positive cases better. However, the addition of these new features diluted the predictors for positive ASD cases, decreasing the sensitivity.
+
+**Task 3 (Fuzzy Intersection)**
+
+```{r}
+# MULTIPLE TESTING SELECTION
+proteins_s1_fuzzy <- ttests_out %>%
+  slice_min(p.adj, n = 10) %>%
+  pull(protein)
+
+## RANDOM FOREST SELECTION
+proteins_s2_fuzzy <- rf_out$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+## FUZZY INTERSECTION
+#####################
+#Combine scores from both methods and assign fuzzy scores
+all_proteins_fuzzy <- unique(c(proteins_s1_fuzzy, proteins_s2_fuzzy))
+
+fuzzy_scores <- tibble(protein = all_proteins_fuzzy) %>%
+  mutate(score = (protein %in% proteins_s1_fuzzy) + (protein %in% proteins_s2_fuzzy))
+
+fuzzy_threshold <- 1.5
+
+## LOGISTIC REGRESSION
+
+# select subset of interest
+proteins_sstar_fuzzy <- fuzzy_scores %>%
+  filter(score >= fuzzy_threshold) %>%
+  pull(protein)
+
+biomarker_sstar_fuzzy <- biomarker_clean %>%
+  select(group, any_of(proteins_sstar_fuzzy)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# partition into training and test set
+set.seed(101422)
+biomarker_split_fuzzy <- biomarker_sstar_fuzzy %>%
+  initial_split(prop = 0.8)
+
+# fit logistic regression model to training set
+fit_fuzzy <- glm(class ~ ., 
+           data = training(biomarker_split_fuzzy), 
+           family = 'binomial')
+
+testing(biomarker_split_fuzzy) %>%
+  add_predictions(fit_fuzzy, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+              truth = tr_c, pred,
+              event_level = 'second')
 ```
 
 ### Improved classifier
@@ -438,3 +493,11 @@ testing(biomarker_split_improved) %>%
                 truth = tr_c, pred,
                 event_level = 'second')
 ```
+
+Instead of choosing 20 predictive proteins in each method, we choose to select top 15 predictive proteins in each method, taking the hard intersection, then explore the accuracy. Comparing between `improved panel model` and previous ones (`larger panel model` and `fuzzy intersection model`), it could be seen that the sensitivity has improved to 0.938. This means that the model could better detect the positive cases. Specifically, 93.8% children were correctly identified with ASD. Additionally, the specificity remains similar, indicating that the improved the model is as effective in successfully detecting the TD group children as the previous one. In particular, both methods could correctly identified 80% of children in TD group. The accuracy of `improved model` had increased to 0.871, meaning that the model of correctly identified the children 87.1% of time.
+
+Overall, the model is improved with an alternative panel. Specifically, we reduced the protein selections from 20 predictive proteins to 15 predictive proteins. The latter model has been improved its ability in detecting ASD group while the ability in detecting the TD has not been compromised.
+
+The reducing in selecting protein could potentially exclude less informative protein and exclude nosier protein, which produce a better prediction. Moreover, intersection of 15 proteins is more refined, where the protein could possibly stronger correlated to target (ASD/TD group). Furthermore, a smaller protein panel could prevent the model from overfitting, which may generalized better in test data.
+
+However, it could be seen that, though accuracy has increased, the AUC has not increased much, which indicate that the overall discriminative power does not improve a lot. Therefore, further optimization strategies could apply to further improve the model.
