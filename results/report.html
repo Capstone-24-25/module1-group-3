@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.1.189">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -19,7 +19,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
 </style>
@@ -35,9 +35,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="report_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-<script src="report_files/libs/quarto-diagram/mermaid.min.js"></script>
-<script src="report_files/libs/quarto-diagram/mermaid-init.js"></script>
-<link href="report_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="report_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="report_files/libs/d3-3.3.8/d3.min.js"></script>
+<script src="report_files/libs/dagre-0.4.0/dagre-d3.min.js"></script>
+<link href="report_files/libs/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="report_files/libs/mermaid-0.3.0/dist/mermaid.slim.min.js"></script>
+<link href="report_files/libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="report_files/libs/chromatography-0.1/chromatography.js"></script>
+<script src="report_files/libs/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script>
 
 
 </head>
@@ -70,13 +75,15 @@ ul.task-list li input[type="checkbox"] {
       <p class="date">October 30, 2024</p>
     </div>
   </div>
-  
     
   </div>
   
 
 </header>
 
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-1_ed00b55140779c96e5726f4fc7cf7b85">
+
+</div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>This study uses data from Hewitson et al.&nbsp;(2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections #and find xxxx results#. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.</p>
@@ -88,22 +95,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="summary-of-published-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-published-analysis">Summary of published analysis</h2>
 <p>To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.</p>
-<p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code>.</p>
-<div class="cell">
+<p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-2_4b53ab915b5c7b81993d936a2a377992">
 <div class="cell-output-display">
-<div>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-  A[Data Collected] --&gt; B(Preprocessing)
-  B --&gt; C(Random Forest)
-  B --&gt; D(t-test)
-  B --&gt; E(correlation-based method)
-  C --&gt; F{5 core protein} 
-  D --&gt; F{5 core protein}
-  E --&gt; F{5 core protein}
-</pre>
-</div>
-</div>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-a6b9949fb19da064228d" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a6b9949fb19da064228d">{"x":{"diagram":"\ngraph LR\n  A[Data Collected] --> B(Preprocessing)\n  B --> C(Random Forest)\n  B --> D(t-test)\n  B --> E(correlation-based method)\n  C --> F{5 core protein} \n  D --> F{5 core protein}\n  E --> F{5 core protein}        \n  "},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Taking those as the core protein, a prediction model is trained with them. They further investigate the 13 left proteins in whether they provided additive predictive power. Along with these model, a logistic regression model is implemented to investigate the accuracy. Four additional proteins provided additive predicitve power, so 9 preoteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.</p>
@@ -115,6 +111,9 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="impact-of-preprocessing-and-outliers">Impact of preprocessing and outliers</h3>
 <section id="task-1" class="level4">
 <h4 class="anchored" data-anchor-id="task-1">Task 1</h4>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-3_9a18b11a75d338f93eb01118aadd86bf">
+
+</div>
 <div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e61cbba387a87938500396962ad4923">
 <div class="cell-output-display">
 <p><img src="report_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
@@ -130,6 +129,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="task-2" class="level4">
 <h4 class="anchored" data-anchor-id="task-2">Task 2</h4>
 <p>To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores &gt; 3 standard deviation from the mean) per subject.</p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-6_8e0bd747ab7cc041e3e82515ebf2a61f">
+
+</div>
 <p>Most subjects have 0 to 3 outliers, but we are more interested in subjects with more than 4 outliers.</p>
 <div class="cell" data-hash="report_cache/html/unnamed-chunk-7_8492b8905c7bfc5d6378fa06f6c595f7">
 <div class="cell-output cell-output-stdout">
@@ -213,17 +215,18 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>The model with 20 proteins performs a lot differently than the original model with 10 proteins from the in class analysis. First, the sensitivity decreased from 0.8125 to 0.75, which means the new model’s ability to correctly identify cases of ASD has decreased. However, the specificity increased from 0.733 to 0.8667, which means that the model performs better in identifying non-ASD cases. The model’s accuracy also improved from 0.7742 to 0.8065, which means that the new model correctly classifies more cases in total. Lastly, the ROC AUC score also improved slightly, from 0.8833 to 0.8917, which means that the model is able to separate positive and negative cases better. By adding 20 proteins instead of 10, the model can better identify negative cases and distinguish between negative and positive cases better. However, the addition of these new features diluted the predictors for positive ASD cases, decreasing the sensitivity.</p>
 <p><strong>Task 3 (Fuzzy Intersection)</strong></p>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-13_a3367102ddac78b11cb10b933b824289">
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-13_5119f79ad7709119c29077cb865446b2">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
-1 sensitivity binary         0.812
-2 specificity binary         0.733
-3 accuracy    binary         0.774
-4 roc_auc     binary         0.883</code></pre>
+1 sensitivity binary         0.562
+2 specificity binary         0.8  
+3 accuracy    binary         0.677
+4 roc_auc     binary         0.783</code></pre>
 </div>
 </div>
+<p>For the model using fuzzy intersection, we decided to create a fuzzy score threshold that the protein had to meet in order to be included in the model. The score represents how many panels the protein is included in. In the original model, the protein had to be included in both the random forest panel and the multiple testing panel to be included, but for the model using fuzzy intersection, the protein only has to be included in one of the panels to be included in the model, which is represented by a fuzzy score threshold of 1. This model performed significantly worse than the original in-class model. The sensitivity decreased from 0.812 to 0.562, which is a significant decrease in the model’s ability to classify true positives, or ASD cases, correctly. On the other hand, the specificity increased from 0.733 to 0.80, which means that this model is better at classifying true negatives, or TD cases, better than the original model. However, the model’s accuracy from 0.774 to 0.677, meaning that it classified less cases correctly than the original model. Lastly, the ROC AUC score of the fuzzy intersection model decreased as well, from 0.883 to 0.783, showing that the new model’s overall ability to distinguish between positive or negative cases decreased. It makes sense that the fuzzy intersection model performs more poorly than the original model. Fuzzy intersection allows proteins that are only selected by one of the methods to be included in the final model, which might include predictors that are not as relevant or add features that do not correlate with the target variable, in this case ASD or TD cases.</p>
 </section>
 <section id="improved-classifier" class="level3">
 <h3 class="anchored" data-anchor-id="improved-classifier">Improved classifier</h3>
@@ -275,23 +278,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
+    target: function(trigger) {
+      return trigger.previousElementSibling;
     }
   });
   clipboard.on('success', function(e) {
@@ -303,24 +292,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
     setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -356,128 +328,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
       });
-    }
+      return popup.innerHTML;
+    });
   }
 });
 </script>
