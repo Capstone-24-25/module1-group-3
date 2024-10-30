@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="List names here">
-<meta name="dcterms.date" content="2024-10-28">
+<meta name="author" content="Daniel Yan, Ziqian Zhao, Nazhah Mir, Xiaofeng Cai">
+<meta name="dcterms.date" content="2024-10-29">
 
 <title>Biomarkers of ASD</title>
 <style>
@@ -51,7 +51,6 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Biomarkers of ASD</h1>
-<p class="subtitle lead">If you want a subtitle put it here</p>
 </div>
 
 
@@ -61,14 +60,14 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>List names here </p>
+             <p>Daniel Yan, Ziqian Zhao, Nazhah Mir, Xiaofeng Cai </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Updated</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 28, 2024</p>
+      <p class="date">October 29, 2024</p>
     </div>
   </div>
   
@@ -78,19 +77,16 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Use this as a template. Keep the headers and remove all other text. In all, your report can be quite short. When it is complete, render and then push changes to your team repository.</p>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>Write a brief one-paragraph abstract that describes the contents of your write-up.</p>
+<p>This study uses data from Hewitson et al.&nbsp;(2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections #and find xxxx results#. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.</p>
 </section>
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.</p>
 <p>The data provided in Hewitson et al.&nbsp;(2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.</p>
 </section>
 <section id="summary-of-published-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-published-analysis">Summary of published analysis</h2>
-<p>Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for <a href="https://quarto.org/docs/authoring/diagrams.html">GraphViz and Mermaid flowcharts</a>.) Provide key results: the proteins selected for the classifier and the estimated accuracy.</p>
 <p>To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.</p>
 <p>Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : <code>DERM</code>, <code>suPAR</code>, <code>MAPK14</code>, <code>EPHB2</code>, and <code>IgD</code>.</p>
 <div class="cell">
@@ -119,16 +115,7 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="impact-of-preprocessing-and-outliers">Impact of preprocessing and outliers</h3>
 <section id="task-1" class="level4">
 <h4 class="anchored" data-anchor-id="task-1">Task 1</h4>
-<<<<<<< Updated upstream
 <div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e61cbba387a87938500396962ad4923">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-3_39bb29d1d3e490de8c6ec20fe65fdee0">
-<div class="cell-output-display">
-<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-4_4e00a763be961ca4c260be235a5b28cb">
->>>>>>> Stashed changes
 <div class="cell-output-display">
 <p><img src="report_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -140,14 +127,12 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that <code>DERM</code> is normally distributed before pre-porcessing but not centered at 0, while <code>Mcl-1</code> is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.</p>
 </section>
-<section id="task-2" class="level4">
-<h4 class="anchored" data-anchor-id="task-2">Task 2</h4>
-<p>Outliers greater than 4:</p>
-<<<<<<< Updated upstream
+</section>
+<section id="task-2" class="level3">
+<h3 class="anchored" data-anchor-id="task-2">Task 2</h3>
+<p>To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores &gt; 3 standard deviation from the mean) per subject.</p>
+<p>Most subjects have 0 to 3 outliers, but we are more interested in subjects with more than 4 outliers.</p>
 <div class="cell" data-hash="report_cache/html/unnamed-chunk-7_8492b8905c7bfc5d6378fa06f6c595f7">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-6_0ab605440a8df70d9978a80289e8fba4">
->>>>>>> Stashed changes
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 34 × 3
    group Column                    Outlier_Count
@@ -165,12 +150,17 @@ ul.task-list li input[type="checkbox"] {
 # ℹ 24 more rows</code></pre>
 </div>
 </div>
-<p>The max outliers count in ASD is 5, and the max outliers count in TD is 4. However, TD seems to have more proteins that have outliers.</p>
-<<<<<<< Updated upstream
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-8_6944a0bce0c932127835a5c869def109">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-7_ed68701741d46f29ae403ac03efb84e7">
->>>>>>> Stashed changes
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-8_def1ffce099fac8c3fe2130fed3e0968">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  group     n
+  &lt;chr&gt; &lt;int&gt;
+1 ASD      16
+2 TD       18</code></pre>
+</div>
+</div>
+<p>We found that the ASD group has 16 subjects with outliers greater than 4, with a maximum of 5 outliers per subject. The TD group has 18 subjects with outliers greater than 4, with a maximum of 4 outliers per subject.</p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-9_6aca8ce85ea0ba0a31cc2e9e07b7efed">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
 # Rowwise: 
@@ -180,17 +170,12 @@ ul.task-list li input[type="checkbox"] {
 2 TD              1312</code></pre>
 </div>
 </div>
-<p>Indeed, by calculating the total amount of outliers, there are more outliers in TD than in ASD.</p>
-</section>
+<p>We also calculated the total number of outliers within each group and found that there are more outliers in the TD group than in the ASD group.</p>
 </section>
 <section id="methodological-variations" class="level3">
 <h3 class="anchored" data-anchor-id="methodological-variations">Methodological variations</h3>
 <p><strong>Original Methodology (from <em>inclass-analysis.R</em>):</strong></p>
-<<<<<<< Updated upstream
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-9_fd4c5b7063ae608d86ab37f5b4d78096">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-8_a268734dc6434032b8efc9d3e6e04805">
->>>>>>> Stashed changes
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-10_f9bb09fd5d644183ec23ce2cbcd7ec14">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
@@ -202,11 +187,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p><strong>Task 3</strong> <strong>(Data split before variable selection)</strong></p>
-<<<<<<< Updated upstream
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-10_861f74c65fceff4bd529f06011394f10">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-9_a12e55ac614c269033946bf2811620dc">
->>>>>>> Stashed changes
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-11_7cfb619bc2c8840adb3278625b5fb4b6">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
@@ -218,11 +199,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p><strong>Task 3 (larger panel of proteins)</strong></p>
-<<<<<<< Updated upstream
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-11_b24fb06731244bd1bfce8ae279257228">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-10_d2f407e8dcc7733afd539acc1043f2d2">
->>>>>>> Stashed changes
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-12_02a441cb132d52f9c5e2853350439228">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
@@ -233,15 +210,23 @@ ul.task-list li input[type="checkbox"] {
 4 roc_auc     binary         0.892</code></pre>
 </div>
 </div>
+<p><strong>Task 3 (Fuzzy Intersection)</strong></p>
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-13_a3367102ddac78b11cb10b933b824289">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  .metric     .estimator .estimate
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+1 sensitivity binary         0.812
+2 specificity binary         0.733
+3 accuracy    binary         0.774
+4 roc_auc     binary         0.883</code></pre>
+</div>
+</div>
 </section>
 <section id="improved-classifier" class="level3">
 <h3 class="anchored" data-anchor-id="improved-classifier">Improved classifier</h3>
 <p><strong>Task 4 (Improved panel of proteins)</strong></p>
-<<<<<<< Updated upstream
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-12_0b3a320ed4a47a3e11cb8785d03966a4">
-=======
-<div class="cell" data-hash="report_cache/html/unnamed-chunk-11_7fb850f57f9172b7234a090a9ed978fb">
->>>>>>> Stashed changes
+<div class="cell" data-hash="report_cache/html/unnamed-chunk-14_d1caa3ca1f2ca5961997473ae3722edb">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   .metric     .estimator .estimate
@@ -252,6 +237,10 @@ ul.task-list li input[type="checkbox"] {
 4 roc_auc     binary         0.896</code></pre>
 </div>
 </div>
+<p>Instead of choosing 20 predictive proteins in each method, we choose to select top 15 predictive proteins in each method, taking the hard intersection, then explore the accuracy. Comparing between <code>improved panel model</code> and previous ones (<code>larger panel model</code> and <code>fuzzy intersection model</code>), it could be seen that the sensitivity has improved to 0.938. This means that the model could better detect the positive cases. Specifically, 93.8% children were correctly identified with ASD. Additionally, the specificity remains similar, indicating that the improved the model is as effective in successfully detecting the TD group children as the previous one. In particular, both methods could correctly identified 80% of children in TD group. The accuracy of <code>improved model</code> had increased to 0.871, meaning that the model of correctly identified the children 87.1% of time.</p>
+<p>Overall, the model is improved with an alternative panel. Specifically, we reduced the protein selections from 20 predictive proteins to 15 predictive proteins. The latter model has been improved its ability in detecting ASD group while the ability in detecting the TD has not been compromised.</p>
+<p>The reducing in selecting protein could potentially exclude less informative protein and exclude nosier protein, which produce a better prediction. Moreover, intersection of 15 proteins is more refined, where the protein could possibly stronger correlated to target (ASD/TD group). Furthermore, a smaller protein panel could prevent the model from overfitting, which may generalized better in test data.</p>
+<p>However, it could be seen that, though accuracy has increased, the AUC has not increased much, which indicate that the overall discriminative power does not improve a lot. Therefore, further optimization strategies could apply to further improve the model.</p>
 </section>
 </section>
 

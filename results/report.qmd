@@ -32,13 +32,9 @@ This study uses data from Hewitson et al. (2021), which includes 154 male pediat
 
 ## Dataset
 
-Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.
-
 The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.
 
 ## Summary of published analysis
-
-Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for [GraphViz and Mermaid flowcharts](https://quarto.org/docs/authoring/diagrams.html).) Provide key results: the proteins selected for the classifier and the estimated accuracy.
 
 To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.
 
@@ -493,3 +489,11 @@ testing(biomarker_split_improved) %>%
                 truth = tr_c, pred,
                 event_level = 'second')
 ```
+
+Instead of choosing 20 predictive proteins in each method, we choose to select top 15 predictive proteins in each method, taking the hard intersection, then explore the accuracy. Comparing between `improved panel model` and previous ones (`larger panel model` and `fuzzy intersection model`), it could be seen that the sensitivity has improved to 0.938. This means that the model could better detect the positive cases. Specifically, 93.8% children were correctly identified with ASD. Additionally, the specificity remains similar, indicating that the improved the model is as effective in successfully detecting the TD group children as the previous one. In particular, both methods could correctly identified 80% of children in TD group. The accuracy of `improved model` had increased to 0.871, meaning that the model of correctly identified the children 87.1% of time. 
+
+Overall, the model is improved with an alternative panel. Specifically, we reduced the protein selections from 20 predictive proteins to 15 predictive proteins. The latter model has been improved its ability in detecting ASD group while the ability in detecting the TD has not been compromised.
+
+The reducing in selecting protein could potentially exclude less informative protein and exclude nosier protein, which produce a better prediction. Moreover, intersection of 15 proteins is more refined, where the protein could possibly stronger correlated to target (ASD/TD group). Furthermore, a smaller protein panel could prevent the model from overfitting, which may generalized better in test data. 
+
+However, it could be seen that, though accuracy has increased, the AUC has not increased much, which indicate that the overall discriminative power does not improve a lot. Therefore, further optimization strategies could apply to further improve the model.
