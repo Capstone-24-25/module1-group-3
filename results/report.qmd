@@ -29,7 +29,7 @@ library(DiagrammeR)
 
 ## Abstract
 
-This study uses data from Hewitson et al. (2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections #and find xxxx results#. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.
+This study uses data from Hewitson et al. (2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.
 
 ## Dataset
 
