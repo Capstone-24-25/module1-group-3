@@ -36,6 +36,26 @@ Write a brief data description, including: how data were obtained; sample charac
 
 Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for [GraphViz and Mermaid flowcharts](https://quarto.org/docs/authoring/diagrams.html).) Provide key results: the proteins selected for the classifier and the estimated accuracy.
 
+<<<<<<< Updated upstream
+=======
+To find the protein for ASD prediction, the paper uses three different methods: random forest(RF), t-test, and correlation-based methods.
+
+Specifically, they use three methods to select the top ten predictive protein from each method, find their intersection : `DERM`, `suPAR`, `MAPK14`, `EPHB2`, and `IgD`.
+
+```{mermaid}
+flowchart LR
+  A[Data Collected] --> B(Preprocessing)
+  B --> C(Random Forest)
+  B --> D(t-test)
+  B --> E(correlation-based method)
+  C --> F{5 core protein} 
+  D --> F{5 core protein}
+  E --> F{5 core protein}
+```
+
+Taking those as the core protein, a prediction model is trained with them. They further investigate the 13 left proteins in whether they provided additive predictive power. Along with these model, a logistic regression model is implemented to investigate the accuracy. Four additional proteins provided additive predicitve power, so 9 proteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.
+
+>>>>>>> Stashed changes
 ## Findings
 
 Summarize your findings here. I've included some subheaders in a way that seems natural to me; you can structure this section however you like.
@@ -132,7 +152,302 @@ Indeed, by calculating the total amount of outliers, there are more outliers in 
 
 ### Methodological variations
 
+<<<<<<< Updated upstream
 Task 3
+=======
+**Original Methodology (from *inclass-analysis.R*):**
+
+```{r}
+load('../data/biomarker-clean.RData')
+
+## MULTIPLE TESTING
+####################
+
+# function to compute tests
+test_fn <- function(.df){
+  t_test(.df, 
+         formula = level ~ group,
+         order = c('ASD', 'TD'),
+         alternative = 'two-sided',
+         var.equal = F)
+}
+
+ttests_out <- biomarker_clean %>%
+  # drop ADOS score
+  select(-ados) %>%
+  # arrange in long format
+  pivot_longer(-group, 
+               names_to = 'protein', 
+               values_to = 'level') %>%
+  # nest by protein
+  nest(data = c(level, group)) %>% 
+  # compute t tests
+  mutate(ttest = map(data, test_fn)) %>%
+  unnest(ttest) %>%
+  # sort by p-value
+  arrange(p_value) %>%
+  # multiple testing correction
+  mutate(m = n(),
+         hm = log(m) + 1/(2*m) - digamma(1),
+         rank = row_number(),
+         p.adj = m*hm*p_value/rank)
+
+# select significant proteins
+proteins_s1 <- ttests_out %>%
+  slice_min(p.adj, n = 10) %>%
+  pull(protein)
+
+## RANDOM FOREST
+##################
+
+# store predictors and response separately
+predictors <- biomarker_clean %>%
+  select(-c(group, ados))
+
+response <- biomarker_clean %>% pull(group) %>% factor()
+
+# fit RF
+set.seed(101422)
+rf_out <- randomForest(x = predictors, 
+                       y = response, 
+                       ntree = 1000, 
+                       importance = T)
+
+# check errors
+# rf_out$confusion
+
+# compute importance scores
+proteins_s2 <- rf_out$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+## LOGISTIC REGRESSION
+#######################
+
+# select subset of interest
+proteins_sstar <- intersect(proteins_s1, proteins_s2)
+
+biomarker_sstar <- biomarker_clean %>%
+  select(group, any_of(proteins_sstar)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# partition into training and test set
+set.seed(101422)
+biomarker_split <- biomarker_sstar %>%
+  initial_split(prop = 0.8)
+
+# fit logistic regression model to training set
+fit <- glm(class ~ ., 
+           data = training(biomarker_split), 
+           family = 'binomial')
+
+# evaluate errors on test set
+class_metrics <- metric_set(sensitivity, 
+                            specificity, 
+                            accuracy,
+                            roc_auc)
+
+testing(biomarker_split) %>%
+  add_predictions(fit, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+              truth = tr_c, pred,
+              event_level = 'second')
+```
+
+**Task 3** **(Data split before variable selection)**
+
+```{r}
+## training & testing partition ##
+##################################
+
+set.seed(1234)
+
+data_split <- initial_split(biomarker_clean, prop = 0.8, strata = group)
+data_train <- training(data_split)
+data_test <- testing(data_split)
+
+## training split multiple testing ##
+#####################################
+
+ttests_out_train <- data_train %>%
+  # drop ADOS score
+  select(-ados) %>%
+  # arrange in long format
+  pivot_longer(-group, 
+               names_to = 'protein', 
+               values_to = 'level') %>%
+  # nest by protein
+  nest(data = c(level, group)) %>% 
+  # compute t tests
+  mutate(ttest = map(data, test_fn)) %>%
+  unnest(ttest) %>%
+  # sort by p-value
+  arrange(p_value) %>%
+  # multiple testing correction
+  mutate(m = n(),
+         hm = log(m) + 1/(2*m) - digamma(1),
+         rank = row_number(),
+         p.adj = m*hm*p_value/rank)
+
+# select significant proteins
+proteins_s1_train <- ttests_out_train %>%
+  slice_min(p.adj, n = 10) %>%
+  pull(protein)
+
+## training split random forest ##
+##################################
+predictors_train <- data_train %>%
+  select(-c(group, ados))
+
+response_train <- data_train %>% pull(group) %>% factor()
+
+# fit RF
+set.seed(101422)
+rf_train <- randomForest(x = predictors_train, 
+                       y = response_train, 
+                       ntree = 1000, 
+                       importance = T)
+
+# compute importance scores
+proteins_s2_train <- rf_train$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+## training split logistic regression ##
+########################################
+
+# select subset of interest
+proteins_sstar_train <- intersect(proteins_s1_train, proteins_s2_train)
+
+biomarker_sstar_train <- data_train %>%
+  select(group, any_of(proteins_sstar_train)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+biomarker_sstar_test <- data_test %>%
+  select(group, any_of(proteins_sstar_train)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# fit logistic regression model to training set
+fit_train <- glm(class ~ ., 
+           data = biomarker_sstar_train, 
+           family = 'binomial')
+
+biomarker_sstar_test %>%
+  add_predictions(fit_train, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+                truth = tr_c, pred,
+                event_level = 'second')
+```
+
+Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
+
+**Task 3 (larger panel of proteins)**
+
+```{r}
+# select top 20 proteins from multiple testing
+proteins_s1_top20 <- ttests_out %>%
+  slice_min(p.adj, n = 20) %>%
+  pull(protein)
+
+# select top 20 proteins from random forest
+proteins_s2_top20 <- rf_out$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 20) %>%
+  pull(protein)
+
+# logistic regression
+proteins_sstar_top20 <- intersect(proteins_s1_top20, proteins_s2_top20)
+
+biomarker_sstar_top20 <- biomarker_clean %>%
+  select(group, any_of(proteins_sstar_top20)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# partition into training and test set
+set.seed(101422)
+biomarker_split_top20 <- biomarker_sstar_top20 %>%
+  initial_split(prop = 0.8)
+
+# fit logistic regression model to training set
+fit_top20 <- glm(class ~ ., 
+           data = training(biomarker_split_top20), 
+           family = 'binomial')
+
+# evaluate errors on test set
+
+testing(biomarker_split_top20) %>%
+  add_predictions(fit_top20, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+                truth = tr_c, pred,
+                event_level = 'second')
+```
+
+**Task 3 (Fuzzy Intersection)**
+
+```{r}
+# MULTIPLE TESTING SELECTION
+proteins_s1_fuzzy <- ttests_out %>%
+  slice_min(p.adj, n = 10) %>%
+  pull(protein)
+
+## RANDOM FOREST SELECTION
+proteins_s2_fuzzy <- rf_out$importance %>% 
+  as_tibble() %>%
+  mutate(protein = rownames(rf_out$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+## FUZZY INTERSECTION
+#####################
+#Combine scores from both methods and assign fuzzy scores
+all_proteins_fuzzy <- unique(c(proteins_s1_fuzzy, proteins_s2_fuzzy))
+
+fuzzy_scores <- tibble(protein = all_proteins_fuzzy) %>%
+  mutate(score = (protein %in% proteins_s1_fuzzy) + (protein %in% proteins_s2_fuzzy))
+
+fuzzy_threshold <- 1.5
+
+## LOGISTIC REGRESSION
+
+# select subset of interest
+proteins_sstar_fuzzy <- fuzzy_scores %>%
+  filter(score >= fuzzy_threshold) %>%
+  pull(protein)
+
+biomarker_sstar_fuzzy <- biomarker_clean %>%
+  select(group, any_of(proteins_sstar_fuzzy)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+# partition into training and test set
+set.seed(101422)
+biomarker_split_fuzzy <- biomarker_sstar_fuzzy %>%
+  initial_split(prop = 0.8)
+
+# fit logistic regression model to training set
+fit_fuzzy <- glm(class ~ ., 
+           data = training(biomarker_split_fuzzy), 
+           family = 'binomial')
+
+testing(biomarker_split_fuzzy) %>%
+  add_predictions(fit_fuzzy, type = 'response') %>%
+  mutate(est = as.factor(pred > 0.5), tr_c = as.factor(class)) %>%
+  class_metrics(estimate = est,
+              truth = tr_c, pred,
+              event_level = 'second')
+```
+>>>>>>> Stashed changes
 
 ### Improved classifier
 
