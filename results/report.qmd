@@ -58,8 +58,6 @@ Taking those as the core proteins, a predictive model is trained with them. They
 
 ## Findings
 
-Summarize your findings here. I've included some subheaders in a way that seems natural to me; you can structure this section however you like.
-
 ### Impact of preprocessing and outliers
 
 #### Task 1
