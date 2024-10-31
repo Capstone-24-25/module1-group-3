@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/7ZSnxz5Q)
 # module1-biomarker
 
 This is the template repository for the module 1 group assignment conducting a proteomic analysis of serum data to identify possible early detection biomarkers of autism spectrum disorder (ASD).
@@ -28,7 +29,7 @@ Your group's task is to explore the sensitivity of the results to certain design
 
 1.  What do you imagine is the reason for log-transforming the protein levels in `biomarker-raw.csv`? (Hint: look at the distribution of raw values for a sample of proteins.)
 
-2.  Temporarily remove the outlier trimming from preprocessing and do some exploratory analysis of outlying values. Are there specific *subjects* (not values) that seem to be outliers? If so, are outliers more frequent in one group or the other? (Hint: consider tabluating the number of outlying values per subject.)
+2.  Temporarily remove the outlier trimming from preprocessing and do some exploratory analysis of outlying values. Are there specific *subjects* (not values) that seem to be outliers? If so, are outliers more frequent in one group or the other? (Hint: consider tabulating the number of outlying values per subject.)
 
 3.  Experiment with the following modifications:
 
