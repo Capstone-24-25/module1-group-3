@@ -29,11 +29,11 @@ library(DiagrammeR)
 
 ## Abstract
 
-This study uses data from Hewitson et al. (2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we applied the three test only on the training data to identify proteins and fitting them into a logistic model to select 10 or 20 proteins. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value. In addition, we explored both fuzzy and hard intersections. Lastly, we tried a 15-protein panel and achieved improved classification accuracy.
+This study uses data from Hewitson et al. (2021), which includes 154 male pediatric subjects classified into ASD (autism spectrum disorder) and TD (typically developing) groups. Following log transformation and trimmed outliers, we split the dataset into training and testing sets. Instead of using random forest, t-tests, and logistic regression to select proteins like the original article, we explored three different methodologies to see which models would fare better than the original. We first split the dataset into a training and testing dataset and applied the three tests only on the training data to identify the proteins and fitted them into a logistic regression model. This model improved in sensitivity, specificity, and accuracy, but had a worse ROC AUC score. Our next method was altering the number of potential proteins from top 10 to top 20 and following the same steps as the in-class model. The model that has 20 predictive proteins returned a better ROC AUC (area under the curve) value and improved accuracy and specificity, but poorer sensitivity. In addition, we explored a fuzzy intersection, which took proteins that were identified by one of the testing methods instead of both and used those as predictors in the model. This model had significantly poorer performance than the original, with it only improving the specificity value.s Lastly, we tried a 15-protein panel and achieved improved classification accuracy.
 
 ## Dataset
 
-The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 protein were analyzed. Addition to quality control, the data were normalized by taking log transformation and trimming out the outlier by z-transformation.
+The data provided in Hewitson et al. (2021) were initially collected in 2017 consists of 154 male pediatric subjects (mostly White/Caucasian and Hispanic/Latino, over 80% of the sample size). All participants were classified into two groups: ASD (autism spectrum disorder) and TD (typically developing). The ASD group was comprised of 76 subjects with a mean age of 5.6 years (SD 1.7 years); The TD group was comprised of 78 subjects with a mean age of 5.7 years (SD 2.0 years). 1317 protein were measured for each sample, 192 of them were failed in the quality control, so 1125 proteins were analyzed. In addition to quality control, the data was normalized by taking log transformation and trimming out the outlier by z-transformation.
 
 ## Summary of published analysis
 
@@ -54,7 +54,7 @@ graph LR
   ")
 ```
 
-Taking those as the core proteins, a predictive model is trained with them. They further investigate the 13 proteins left in whether they provided additive predictive power. Along with these model,s a logistic regression model is implemented to investigate the accuracy. It was discovered that four additional proteins provided additive predictive power, so a total of 9 proteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.
+Taking those as the core proteins, a predictive model is trained with them. They further investigate the 13 proteins left in whether they provided additive predictive power. Along with these models, a logistic regression model is implemented to investigate the accuracy. It was discovered that four additional proteins provided additive predictive power, so a total of 9 proteins resulted in an AUC of 86% with a sensitivity of 83% and specificity of 84%.
 
 ## Findings
 
@@ -111,11 +111,11 @@ qqnorm(main = "Clean Data Q-Q plot for `DERM`",biomarker_clean$DERM)
 qqline(biomarker_clean$DERM, col = "red")
 ```
 
-We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein type and examine the normality. It could be seen that `DERM` is normally distributed before pre-porcessing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. In this way, the data used for further model training could be more reliable.
+We compare the data before processing and after processing. Specifically, we compare the raw data set and data after log-transformation and scaling. We randomly selected two sample protein types and examine the normality. It could be seen that `DERM` is normally distributed before pre-processing but not centered at 0, while `Mcl-1` is neither normally distributed nor centralized. Therefore, we could conclude that not all protein types are normally distributed in the raw data, so a log-transformation is used. By using this method, the data used for further model training could be more reliable.
 
 #### Task 2
 
-To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores \> 3 standard deviation from the mean) per subject.
+To do some exploratory analysis of outlying values. First, we counted the number of outliers (Z-scores \> 3) standard deviation from the mean) per subject.
 
 ```{r, message = F}
 z_score <- biomarker_clean %>%
@@ -352,7 +352,7 @@ biomarker_sstar_test %>%
                 event_level = 'second')
 ```
 
-Comparing this model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
+Comparing the split model to the original in class analysis, we can see that sensitivity of the model increased from 0.8125 to 0.875, meaning that the model became better at detecting true positives, or ASD cases. The specificity of the model also increased slightly from 0.733 to 0.75, meaning that the model also became slightly better at identifying true negatives, or TD cases. The accuracy of the model also improved from 0.7741 to 0.8125, which suggests that splitting the model into training and testing data does in fact perform better in predicting both classes correctly. However, the ROC AUC score dropped from 0.8833 to 0.8203, which indicates that the model's ability to distinguish between positive and negative thresholds has decreased. The high ROC AUC score from the initial model can be attributed to overfitting, as the model could have recognized patterns specific to the test set because the same data was used to train and test. This means that the model where the data was trained on a separate set of data is better, as it trades off class separation capability for improved generalization.
 
 **Task 3 (larger panel of proteins)**
 
